@@ -1,0 +1,16 @@
+Title: Spiral Matrix
+
+Description:
+Given an m x n matrix, return all elements in spiral order (clockwise from the top-left: go right, then down, then left, then up, repeat).
+
+Function Signature:
+def spiral_order(matrix: list[list[int]]) -> list[int]:
+
+Constraints:
+m == len(matrix), n == len(matrix[0]), 1 <= m, n <= 10, -100 <= matrix[i][j] <= 100
+
+Example Inputs:
+[[1,2,3],[4,5,6],[7,8,9]]
+
+Expected Outputs:
+[1,2,3,6,9,8,7,4,5]

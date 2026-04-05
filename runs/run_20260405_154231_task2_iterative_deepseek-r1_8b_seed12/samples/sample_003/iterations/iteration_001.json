@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def minimal_folds(start, target):\n    if start == target:\n        return 0\n    current = start\n    folds = 0\n    while current != target and current > 1:\n        current = current // 2\n        folds += 1\n    if current == target:\n        return folds\n    else:\n        return None\n\ndef find_minimal_fold_sequence(seed, target_w, target_h):\n    w_folds = minimal_folds(seed, target_w)\n    h_folds = minimal_folds(seed, target_h)\n    if w_folds is None or h_folds is None:\n        return []\n    return ['W'] * w_folds + ['H'] * h_folds",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

@@ -1,0 +1,16 @@
+{
+  "pass_at_1": 0.6,
+  "pass_at_5": 1.0,
+  "samples_passed": 3,
+  "samples_total": 5,
+  "mutation_score": 1.0,
+  "mutants_killed": 23,
+  "mutants_total": 23,
+  "avg_lines_of_code": 13.6,
+  "avg_cyclomatic_complexity": 6.2,
+  "avg_maintainability_index": 98.11,
+  "avg_run_time_seconds": 11.05,
+  "total_run_time_seconds": 55.24,
+  "total_syntax_errors": 0,
+  "avg_attempts": 2.6
+}

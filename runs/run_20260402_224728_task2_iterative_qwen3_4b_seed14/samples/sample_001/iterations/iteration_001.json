@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def fib(n: int) -> int:\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a + b\n    return a",
+  "syntax_error": "",
+  "tests_passed": 5,
+  "tests_total": 5,
+  "output": ".....                                                                    [100%]\n5 passed in 0.02s\n"
+}

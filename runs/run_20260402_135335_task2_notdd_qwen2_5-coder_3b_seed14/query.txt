@@ -1,0 +1,16 @@
+Title: Fibonacci Number
+
+Description:
+Return the n-th Fibonacci number where fib(0)=0 and fib(1)=1.
+
+Function Signature:
+def fib(n: int) -> int:
+
+Constraints:
+0 <= n <= 30
+
+Example Inputs:
+10
+
+Expected Outputs:
+55

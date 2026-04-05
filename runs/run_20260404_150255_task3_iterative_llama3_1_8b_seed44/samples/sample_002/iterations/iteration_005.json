@@ -1,0 +1,8 @@
+{
+  "attempt": 5,
+  "code": "def decode_hieroglyphic_sum(hieroglyphs: str) -> int:\n    roman_values = {'I': 1, 'V': 5, 'X': 10}\n    total = 0\n    for i in range(len(hieroglyphs)):\n        if i + 1 < len(hieroglyphs) and roman_values[hieroglyphs[i]] < roman_values[hieroglyphs[i + 1]]:\n            total -= roman_values[hieroglyphs[i]]\n        else:\n            total += roman_values[hieroglyphs[i]]\n    return total",
+  "syntax_error": "",
+  "tests_passed": 5,
+  "tests_total": 6,
+  "output": "..F...                                                                   [100%]\n=================================== FAILURES ===================================\n______________________ test_decode_hieroglyphic_sum_LVIII ______________________\ntest_solution.py:10: in test_decode_hieroglyphic_sum_LVIII\n    assert decode_hieroglyphic_sum('LVIII') == 58\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsolution.py:5: in decode_hieroglyphic_sum\n    if i + 1 < len(hieroglyphs) and roman_values[hieroglyphs[i]] < roman_values[hieroglyphs[i + 1]]:\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   KeyError: 'L'\n=========================== short test summary info ============================\nFAILED test_solution.py::test_decode_hieroglyphic_sum_LVIII - KeyError: 'L'\n1 failed, 5 passed in 0.02s\n"
+}

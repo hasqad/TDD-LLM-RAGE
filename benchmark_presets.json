@@ -1,0 +1,82 @@
+{
+  "easy": {
+    "description": "Easy tasks: Palindrome Check, Fibonacci, Valid Parentheses. All 164 HumanEval problems.",
+    "seeds": [1, 14, 32],
+    "samples_per_task": 5,
+    "max_iterations": 5,
+    "he_problems": 164,
+    "he_offset": 0,
+    "no_mutation": false
+  },
+  "medium": {
+    "description": "Medium tasks: Decode Ways, Spiral Matrix, Unique Paths. All 164 HumanEval problems.",
+    "seeds": [13, 23, 7],
+    "samples_per_task": 5,
+    "max_iterations": 5,
+    "he_problems": 164,
+    "he_offset": 0,
+    "no_mutation": false
+  },
+  "hard": {
+    "description": "Hard tasks: Decode Ways, Spiral Matrix, Unique Paths, Edit Distance. All 164 HumanEval problems.",
+    "seeds": [13, 23, 7, 25],
+    "samples_per_task": 5,
+    "max_iterations": 5,
+    "he_problems": 164,
+    "he_offset": 0,
+    "no_mutation": false
+  },
+  "very_hard": {
+    "description": "Very hard: novel LLM-generated tasks at medium difficulty (can't be memorized). All 164 HumanEval problems.",
+    "task_source": "unknown",
+    "task_difficulty": "medium",
+    "seeds": [16, 25, 44],
+    "samples_per_task": 5,
+    "max_iterations": 5,
+    "he_problems": 164,
+    "he_offset": 0,
+    "no_mutation": false
+  },
+  "extremely_hard": {
+    "description": "Extremely hard: novel LLM-generated tasks at very_hard difficulty. All 164 HumanEval problems.",
+    "task_source": "unknown",
+    "task_difficulty": "very_hard",
+    "seeds": [9, 12, 17],
+    "samples_per_task": 5,
+    "max_iterations": 5,
+    "he_problems": 164,
+    "he_offset": 0,
+    "no_mutation": false
+  },
+  "legendary": {
+    "description": "Legendary: novel LLM-generated tasks at legendary difficulty. All 164 HumanEval problems.",
+    "task_source": "unknown",
+    "task_difficulty": "legendary",
+    "seeds": [29, 6, 5, 27],
+    "samples_per_task": 5,
+    "max_iterations": 5,
+    "he_problems": 164,
+    "he_offset": 0,
+    "no_mutation": false
+  },
+  "impossible": {
+    "description": "Impossible: novel LLM-generated tasks at impossible difficulty. All 164 HumanEval problems.",
+    "task_source": "unknown",
+    "task_difficulty": "impossible",
+    "seeds": [19, 24, 20],
+    "samples_per_task": 5,
+    "max_iterations": 5,
+    "he_problems": 164,
+    "he_offset": 0,
+    "no_mutation": false
+  },
+  "quick": {
+    "description": "Fast smoke-test: 3 medium seeds, 3 samples, no mutation, 10 HumanEval problems.",
+    "seeds": [13, 23, 7],
+    "samples_per_task": 3,
+    "max_iterations": 3,
+    "he_problems": 10,
+    "he_offset": 30,
+    "no_mutation": true
+  }
+}

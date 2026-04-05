@@ -1,0 +1,8 @@
+{
+  "attempt": 5,
+  "code": "def molecule_to_binary(molecule: str) -> str:\n    total = 0\n    for char in molecule:\n        total += ord(char)\n    return bin(total)",
+  "syntax_error": "",
+  "tests_passed": 1,
+  "tests_total": 4,
+  "output": "F.FF                                                                     [100%]\n=================================== FAILURES ===================================\n_________________________________ test_example _________________________________\ntest_solution.py:4: in test_example\n    assert molecule_to_binary(\"H2O\") == '0b1000110'\nE   AssertionError: assert '0b11001001' == '0b1000110'\nE     \nE     - 0b1000110\nE     + 0b11001001\n_____________________________ test_single_element ______________________________\ntest_solution.py:10: in test_single_element\n    assert molecule_to_binary(\"C\") == '0b67'\nE   AssertionError: assert '0b1000011' == '0b67'\nE     \nE     - 0b67\nE     + 0b1000011\n____________________________ test_multiple_elements ____________________________\ntest_solution.py:13: in test_multiple_elements\n    assert molecule_to_binary(\"CO2\") == '0b1100111'\nE   AssertionError: assert '0b11000100' == '0b1100111'\nE     \nE     - 0b1100111\nE     + 0b11000100\n=========================== short test summary info ============================\nFAILED test_solution.py::test_example - AssertionError: assert '0b11001001' =...\nFAILED test_solution.py::test_single_element - AssertionError: assert '0b1000...\nFAILED test_solution.py::test_multiple_elements - AssertionError: assert '0b1...\n3 failed, 1 passed in 0.02s\n"
+}

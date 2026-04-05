@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def num_decodings(s: str) -> int:\n    if not s or s[0] == '0':\n        return 0\n    \n    dp = [1] + [0] * len(s)\n    \n    for i in range(1, len(s)):\n        # Check single digit decoding\n        if s[i] != '0':\n            dp[i + 1] += dp[i]\n        \n        # Check two-digit decoding\n        if 10 <= int(s[i - 1:i + 1]) <= 26:\n            dp[i + 1] += dp[i - 1]\n    \n    return dp[-1]",
+  "syntax_error": "",
+  "tests_passed": 3,
+  "tests_total": 6,
+  "output": "F...FF                                                                   [100%]\n=================================== FAILURES ===================================\n_________________________________ test_example _________________________________\ntest_solution.py:5: in test_example\n    assert num_decodings(\"226\") == 3\nE   AssertionError: assert 1 == 3\nE    +  where 1 = num_decodings('226')\n______________________________ test_single_digit _______________________________\ntest_solution.py:18: in test_single_digit\n    assert num_decodings(\"7\") == 1\nE   AssertionError: assert 0 == 1\nE    +  where 0 = num_decodings('7')\n_________________________________ test_complex _________________________________\ntest_solution.py:22: in test_complex\n    assert num_decodings(\"11106\") == 2\nE   AssertionError: assert 1 == 2\nE    +  where 1 = num_decodings('11106')\n=========================== short test summary info ============================\nFAILED test_solution.py::test_example - AssertionError: assert 1 == 3\nFAILED test_solution.py::test_single_digit - AssertionError: assert 0 == 1\nFAILED test_solution.py::test_complex - AssertionError: assert 1 == 2\n3 failed, 3 passed in 0.02s\n"
+}

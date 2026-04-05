@@ -1,0 +1,8 @@
+{
+  "attempt": 4,
+  "code": "def decode_hieroglyphic_sum(hieroglyphs: str) -> int:\n    values = {'I': 1, 'V': 5, 'X': 10}\n    total = 0\n    \n    for i in range(len(hieroglyphs)):\n        value = values[hieroglyphs[i]]\n        if i > 0 and values.get(hieroglyphs[i-1], 0) < value:\n            total += value - 2 * values.get(hieroglyphs[i-1], 0)\n        else:\n            total += value\n    \n    return total",
+  "syntax_error": "",
+  "tests_passed": 1,
+  "tests_total": 3,
+  "output": "F.F                                                                      [100%]\n=================================== FAILURES ===================================\n_____________________ test_decode_hieroglyphic_sum_example _____________________\ntest_solution.py:6: in test_decode_hieroglyphic_sum_example\n    assert decode_hieroglyphic_sum('LVIII') == 58\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsolution.py:6: in decode_hieroglyphic_sum\n    value = values[hieroglyphs[i]]\n            ^^^^^^^^^^^^^^^^^^^^^^\nE   KeyError: 'L'\n__________________ test_decode_hieroglyphic_sum_large_number ___________________\ntest_solution.py:14: in test_decode_hieroglyphic_sum_large_number\n    assert decode_hieroglyphic_sum('MCMXCIV') == 1994\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsolution.py:6: in decode_hieroglyphic_sum\n    value = values[hieroglyphs[i]]\n            ^^^^^^^^^^^^^^^^^^^^^^\nE   KeyError: 'M'\n=========================== short test summary info ============================\nFAILED test_solution.py::test_decode_hieroglyphic_sum_example - KeyError: 'L'\nFAILED test_solution.py::test_decode_hieroglyphic_sum_large_number - KeyError...\n2 failed, 1 passed in 0.02s\n"
+}

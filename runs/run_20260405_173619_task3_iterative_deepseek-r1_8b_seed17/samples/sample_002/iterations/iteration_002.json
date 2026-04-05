@@ -1,0 +1,8 @@
+{
+  "attempt": 2,
+  "code": "def recipe_chain_optimization(n: int, recipes: List[Tuple[str, int, Tuple[int, int]]], graph: List[List[int]], min_cal: int, min_protein: int) -> int:\n    parent_set = [set(p) for p in graph]\n    \n    INF = 10**9\n    best = [[INF] * (min_protein + 1) for _ in range(min_cal + 1)]\n    \n    for mask in range(1 << n):\n        valid = True\n        for i in range(n):\n            if mask & (1 << i):\n                for parent_index in parent_set[i]:\n                    if not (mask & (1 << parent_index)):\n                        valid = False\n                        break\n                if not valid:\n                    break\n        \n        if not valid:\n            continue\n            \n        total_cal = 0\n        total_pro = 0\n        total_cost = 0\n        for i in range(n):\n            if mask & (1 << i):\n                cal, pro = recipes[i][2]\n                cost_i = recipes[i][1]\n                total_cal += cal\n                total_pro += pro\n                total_cost += cost_i\n        \n        c = min(total_cal, min_cal)\n        p = min(total_pro, min_protein)\n        \n        if best[c][p] > total_cost:\n            best[c][p] = total_cost\n    \n    return best[min_cal][min_protein]",
+  "syntax_error": "",
+  "tests_passed": 4,
+  "tests_total": 4,
+  "output": "....                                                                     [100%]\n4 passed in 0.01s\n"
+}

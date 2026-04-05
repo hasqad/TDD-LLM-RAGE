@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def is_valid(s: str) -> bool:\n    # Dictionary to hold matching pairs of brackets\n    bracket_pairs = {')': '(', '}': '{', ']': '['}\n    \n    # Stack to keep track of opening brackets\n    stack = []\n    \n    for char in s:\n        if char in bracket_pairs.values():  # If it's an opening bracket\n            stack.append(char)\n        elif char in bracket_pairs:  # If it's a closing bracket\n            if not stack or stack[-1] != bracket_pairs[char]:\n                return False\n            stack.pop()\n    \n    return len(stack) == 0\n\n# Example usage:\nprint(is_valid('()[]{}'))  # Output: True",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

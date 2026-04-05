@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "from collections import deque\nfrom typing import List\n\ndef find_minimal_fold_sequence(seed: int, target_w: int, target_h: int) -> List[str]:\n    if target_w > seed or target_h > seed:\n        return []\n    \n    if seed == target_w and seed == target_h:\n        return []\n    \n    queue = deque()\n    queue.append((seed, seed, []))\n    visited = set()\n    visited.add((seed, seed))\n    \n    while queue:\n        w, h, path = queue.popleft()\n        if w == target_w and h == target_h:\n            return path\n            \n        if w > 1:\n            new_w = w // 2\n            new_state = (new_w, h)\n            if new_state not in visited:\n                new_path = path + ['W']\n                queue.append((new_w, h, new_path))\n                visited.add(new_state)\n                \n        if h > 1:\n            new_h = h // 2\n            new_state = (w, new_h)\n            if new_state not in visited:\n                new_path = path + ['H']\n                queue.append((w, new_h, new_path))\n                visited.add(new_state)\n                \n    return []",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

@@ -1,0 +1,16 @@
+Title: Valid Parentheses
+
+Description:
+Given a string containing only '(', ')', '{', '}', '[', ']', determine if the input string is valid. Open brackets must be closed by the same type in the correct order.
+
+Function Signature:
+def is_valid(s: str) -> bool:
+
+Constraints:
+1 <= len(s) <= 10^4, s consists only of parentheses characters
+
+Example Inputs:
+'()[]{}'
+
+Expected Outputs:
+True

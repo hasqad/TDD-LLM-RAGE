@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def recipe_chain_optimization(n: int, recipes: List[Tuple[str, int, Tuple[int, int]]], graph: List[List[int]], min_cal: int, min_protein: int) -> int:\n    costs_arr = [0] * n\n    cal_arr = [0] * n\n    pro_arr = [0] * n\n    for i in range(n):\n        name, cost, (cal_val, pro_val) = recipes[i]\n        costs_arr[i] = cost\n        cal_arr[i] = cal_val\n        pro_arr[i] = pro_val\n        \n    parent_mask = [0] * n\n    for i in range(n):\n        for parent in graph[i]:\n            parent_mask[i] |= (1 << parent)\n            \n    N = 1 << n\n    best = float('inf')\n    \n    for mask in range(N):\n        valid_flag = True\n        for i in range(n):\n            if mask & (1 << i):\n                if (mask & parent_mask[i]) != parent_mask[i]:\n                    valid_flag = False\n                    break\n                    \n        if not valid_flag:\n            continue\n            \n        total_cal_val = 0\n        total_pro_val = 0\n        total_cost_val = 0\n        for i in range(n):\n            if mask & (1 << i):\n                total_cal_val += cal_arr[i]\n                total_pro_val += pro_arr[i]\n                total_cost_val += costs_arr[i]\n                \n        if total_cal_val >= min_cal and total_pro_val >= min_protein:\n            if total_cost_val < best:\n                best = total_cost_val\n                \n    return best if best != float('inf') else -1",
+  "syntax_error": "",
+  "tests_passed": 4,
+  "tests_total": 4,
+  "output": "....                                                                     [100%]\n4 passed in 0.01s\n"
+}

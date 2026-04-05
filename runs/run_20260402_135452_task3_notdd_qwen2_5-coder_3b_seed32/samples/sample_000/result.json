@@ -1,0 +1,9 @@
+{
+  "index": 0,
+  "seed": 32100,
+  "passed": false,
+  "tests_passed": 0,
+  "tests_total": 0,
+  "syntax_error": "closing parenthesis '}' does not match opening parenthesis '(' (solution.py, line 3)",
+  "run_time": 4.350419044494629
+}

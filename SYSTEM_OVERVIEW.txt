@@ -1,0 +1,544 @@
+================================================================================
+  TDD-LLM-RAGE — SYSTEM OVERVIEW
+================================================================================
+
+WHAT IS THIS?
+-------------
+This system benchmarks whether Test-Driven Development (TDD) improves the code
+quality produced by LLMs (Large Language Models). It compares three approaches:
+
+  1. ITERATIVE  — TDD-style: generate tests first, then loop code until tests pass
+  2. BATCH      — sees the tests upfront, generates code once to pass them
+  3. NOTDD      — generates code from description only, never sees any tests
+
+The hypothesis: iterative >= batch > notdd
+
+  - Iterative has the most information (tests + failure feedback on each attempt)
+  - Batch sees the tests but gets no feedback loop
+  - NoTDD is the baseline — no test guidance at all
+
+
+================================================================================
+  HOW THE SYSTEM WORKS
+================================================================================
+
+STEP 1 — TASK SELECTION
+  A seed (integer) is passed in. The system uses that seed to either:
+    - Pick a task from known tasks (famous LeetCode-style problems)
+    - Ask the LLM to generate a novel task (for very_hard+ presets)
+  Using a seed makes the run reproducible.
+
+STEP 2 — TEST GENERATION (shared for iterative and batch)
+  The system asks the LLM to write a pytest test suite for the task.
+  These tests are the "ground truth" for evaluating code quality.
+  Both iterative and batch use the same generated tests.
+  NotDD never sees any tests.
+
+STEP 3 — CODE GENERATION (per pipeline)
+
+  ITERATIVE:
+    Attempt 1: LLM sees task description + function signature → generates code
+    If tests fail → LLM sees the failure output → regenerates code
+    Repeats up to max_iterations (default 5) times
+    Uses seed + attempt number for reproducibility
+
+  BATCH:
+    LLM sees task description + function signature + the full test suite
+    Generates code once, trying to make all tests pass
+    No feedback loop — single attempt
+
+  NOTDD:
+    LLM sees task description + function signature only
+    Generates code once
+    No tests, no feedback
+
+STEP 4 — EVALUATION
+  The generated code is run against the test suite.
+  Results are recorded: did it pass? how many tests? how many iterations?
+  Code metrics (LOC, cyclomatic complexity) are measured on passing code.
+  Mutation testing is run on passing code to measure test suite quality.
+
+STEP 5 — HUMANEVAL (Part 2 of benchmark)
+  All three pipelines are also tested on HumanEval — a standard benchmark
+  of 164 Python programming problems with ground-truth check() functions.
+  This provides an independent, objective comparison across pipelines.
+
+STEP 6 — RESULTS
+  Summary statistics are printed and saved to benchmark_results.jsonl.
+  Each full run is also stored as a row in a temporary SQLite database.
+
+
+================================================================================
+  METRICS EXPLAINED
+================================================================================
+
+PASS@1
+  The probability that a single randomly-drawn code sample is correct.
+  Averaged across all tasks and all seeds in the run.
+  Example: if you run 5 seeds and 3 out of 5 generate passing code → pass@1 = 60%
+  This is NOT 0% or 100% just because a pipeline makes 1 attempt.
+  With 5 seeds, you can pass on some seeds and fail on others.
+
+PASS@5
+  The probability that at least 1 of 5 independent samples is correct.
+  Always >= pass@1. Measures: "if you try 5 times, does at least one work?"
+  Formula: 1 - (probability all 5 fail)
+
+  Expected ordering: iterative >= batch > notdd for both metrics.
+
+MUTATION SCORE
+  After code passes its tests, the system creates "mutants" — slightly broken
+  versions of the code (e.g. change + to -, flip a comparison, remove a branch).
+  It then runs the test suite against each mutant.
+  Mutation score = fraction of mutants that the tests catch (kill).
+  Higher mutation score = better test suite coverage.
+
+  Why does it matter? It tells you if the tests are actually meaningful.
+  If tests don't catch any mutations, they're weak/trivial tests.
+  Expected: iterative's tests are better (more feedback-driven) → higher mutation score.
+  NotDD has no tests at all, so mutation score is 0% for notdd.
+
+LOC (Lines of Code)
+  Average number of lines in the generated function.
+  Lower is generally better — simpler, more focused implementations.
+  Expected: iterative produces leaner code (tests constrain the solution).
+  NotDD tends to over-engineer (no constraints → more speculative code).
+
+CC (Cyclomatic Complexity)
+  Counts the number of independent code paths through a function.
+  Simple if/else = 2. Nested loops with conditions = higher.
+  Lower CC = simpler, more maintainable code.
+  Scale: 1-5 simple, 6-10 moderate, 10+ complex.
+  Expected: iterative produces lower CC (tests force simplicity).
+
+ATTEMPTS
+  Average number of iterations the iterative pipeline needed before passing.
+  NotDD and batch are always exactly 1.0 (single attempt).
+  Iterative will be 1.0–5.0 depending on task difficulty.
+  Lower attempts on easy tasks = model is capable.
+  Higher attempts = model needed feedback to self-correct.
+
+HUMANEVAL PASS@1
+  On the 164 standard HumanEval problems, what fraction did the pipeline solve?
+  This is an independent ground-truth check (HumanEval has pre-written assertions).
+  Expected: iterative > batch > notdd, but gaps are smaller here since
+  HumanEval problems are well-defined and coder models know them well.
+
+
+================================================================================
+  WHAT RESULTS ARE WE LOOKING FOR?
+================================================================================
+
+IDEAL OUTPUT:
+  Pipeline      pass@1   pass@5   MutScore    LOC    CC   Attempts  HumanEval
+  iterative     highest  highest  highest   lowest lowest  1.5–3.0   highest
+  batch         middle   middle   middle    middle middle    1.0      middle
+  notdd         lowest   lowest     0%      highest highest   1.0      lowest
+
+KEY SIGNALS:
+
+  iterative > batch > notdd on pass@1 / pass@5
+    → Confirms TDD feedback loop helps. Batch helps too (seeing tests = better).
+
+  iterative higher mutation score than batch
+    → Tests generated under feedback pressure are more thorough.
+
+  iterative lower CC than notdd
+    → TDD forces simpler implementations.
+
+  iterative > notdd on HumanEval
+    → The advantage holds on an independent benchmark too.
+
+  iterative attempts > 1.0
+    → The feedback loop is actually being used (model isn't trivially passing first try).
+
+WARNING SIGNS (something is broken):
+
+  All three pipelines tied at same score
+    → Ceiling effect: tasks too easy/memorized. Use harder preset or novel tasks.
+
+  All three pipelines at 0%
+    → Tasks too hard. Use easier preset or stronger model.
+
+  notdd >= iterative
+    → Possible seed mismatch, prompt inequality, or broken feedback loop.
+
+  batch = notdd exactly
+    → Batch may not be showing tests to the model (check BATCH_TDD_PROMPT usage).
+
+  batch LOC very low (< 5 lines)
+    → Batch generated stub/placeholder code. Tasks were too complex for the model.
+
+  Attempts for iterative = 1.0
+    → Feedback loop not triggering (model passes on first try, or loop is broken).
+
+
+================================================================================
+  TASK SOURCES
+================================================================================
+
+KNOWN TASKS (easy, medium, hard presets)
+  Hardcoded famous programming problems (LeetCode classics, etc.).
+  Risk: coder models have memorized these → all pipelines get 100% → no differentiation.
+  Use for: sanity checks and understanding the system behavior.
+
+UNKNOWN TASKS (very_hard, extremely_hard, legendary, impossible presets)
+  A strong LLM generates novel, synthetic tasks at runtime.
+  These are not in any training set → models can't memorize them.
+  Use for: real differentiation between pipelines.
+  Risk: tasks can be too hard for small models (7b) → all 0%.
+  Fix: use a 14b+ model with novel tasks.
+
+MODEL SWEET SPOT:
+  Too weak (3b)  → everything fails → all 0% → no differentiation
+  Too strong (70b+) → everything passes → all 100% → no differentiation
+  Sweet spot (7b–14b) with novel tasks → meaningful variance between pipelines
+
+
+================================================================================
+  FILES AND WHAT THEY DO
+================================================================================
+
+ROOT SCRIPTS
+  run_full_benchmark.py
+    Main entry point. Runs Part 1 (main experiment) + Part 2 (HumanEval) together.
+    Saves results to benchmark_results.jsonl.
+    Usage:
+      python3 run_full_benchmark.py --preset very_hard --model qwen2.5-coder:7b
+      python3 run_full_benchmark.py --list       # show available presets
+      python3 run_full_benchmark.py --history    # show past runs
+
+  run_experiment.py
+    Runs a single experiment (one task, one seed, all three pipelines).
+    Saves results to runs/ directory.
+
+  run_humaneval.py
+    Runs only the HumanEval benchmark (Part 2), skipping Part 1.
+
+  show_all_runs.py
+    Reads all 300+ run directories from runs/ and prints summaries.
+    Usage:
+      python3 show_all_runs.py           # summary by pipeline
+      python3 show_all_runs.py model     # grouped by model + pipeline
+      python3 show_all_runs.py all       # every individual run
+
+  analyze_results.py
+    Analyzes and prints detailed statistics from benchmark_results.jsonl.
+
+  benchmark_presets.json
+    Named configurations for benchmark runs. Presets:
+      quick        — 10 HumanEval problems, 3 seeds, no mutation (fast smoke test)
+      easy         — known tasks, seeds [1,14,32]
+      medium       — known tasks, seeds [13,23,7]
+      hard         — known tasks, seeds [13,23,7,25]
+      very_hard    — novel tasks, seeds [16,25,44]
+      extremely_hard — novel tasks, seeds [9,12,17]
+      legendary    — novel tasks, seeds [29,6,5,27]
+      impossible   — novel tasks, seeds [19,24,20]
+    All presets run all 164 HumanEval problems (offset 0).
+
+  benchmark_results.jsonl
+    Append-only log of all full benchmark runs.
+    Each line = one JSON object with timestamp, model, preset, and all metrics.
+    Read with: python3 run_full_benchmark.py --history
+
+PIPELINES (tdd_llm/pipelines/)
+  iterative_pipeline.py
+    Implements the TDD feedback loop.
+    Attempt 1: generates code from task description.
+    Attempt 2-N: regenerates code using test failure output as feedback.
+    Max iterations configurable (default 5).
+
+  batch_pipeline.py
+    Single-shot generation with tests visible upfront.
+    Generates tests first, then shows them to the model to generate code.
+    No feedback loop — one attempt only.
+
+  notdd_pipeline.py
+    Baseline: generates code from task description only.
+    Never sees any tests. Single attempt.
+
+PROMPTS (tdd_llm/prompts/)
+  code_prompts.py
+    TEST_GENERATION_SYSTEM / TEST_GENERATION_PROMPT
+      → Ask model to write pytest tests for a function
+    CODE_GENERATION_SYSTEM / CODE_GENERATION_PROMPT
+      → Ask model to implement a function (used by iterative attempt 1 and notdd)
+    ITERATIVE_FEEDBACK_PROMPT
+      → Ask model to fix code given test failure output (used by iterative attempt 2+)
+    BATCH_TDD_PROMPT
+      → Ask model to implement a function that passes the provided test suite (batch only)
+    NOTDD_GENERATION_PROMPT
+      → Same as CODE_GENERATION_PROMPT, used by notdd pipeline
+
+  task_prompts.py / task_generator.py
+    Templates and logic for generating novel tasks (used by unknown task source).
+
+EVALUATION (tdd_llm/evaluation/)
+  test_runner.py
+    Runs pytest on generated code in a subprocess sandbox.
+    Returns: passed/failed, number of tests, failure output.
+
+  code_metrics.py
+    Measures LOC (lines of code) and CC (cyclomatic complexity) using radon.
+
+  mutation_testing.py
+    Applies AST mutations to passing code, runs tests against each mutant,
+    calculates mutation score (fraction of mutants killed).
+
+  pass_at_k.py
+    Implements the pass@k formula:
+    pass@k = 1 - C(n-c, k) / C(n, k)
+    where n = total samples, c = correct samples, k = k value.
+
+  humaneval.py
+    Loads HumanEval problems from data/HumanEval.jsonl.gz.
+    Runs each pipeline's generated code against HumanEval's check() function.
+
+UTILITIES (tdd_llm/utils/)
+  ollama_client.py
+    HTTP client for the local Ollama API (localhost:11434).
+    Sends prompts, receives completions.
+    extract_python_code() strips markdown fences from LLM responses.
+
+  file_manager.py
+    Saves run artifacts (solution.py, tests, metrics.json) to runs/ directory.
+
+DATABASE (tdd_llm/db/)
+  schema.py
+    SQLite schema: tables for experiments, samples, iterations.
+
+  repository.py
+    Data access layer. Saves results, queries summaries by pipeline.
+    summary_by_pipeline() returns avg pass@1, pass@5, mutation_score, LOC, CC.
+
+DATA
+  data/HumanEval.jsonl.gz
+    164 Python programming problems with entry points and check() functions.
+    Standard benchmark used across the AI community.
+
+  data/experiments.db
+    Persistent SQLite database (used by run_experiment.py).
+    Full benchmarks use a temporary DB per run (deleted after summary is printed).
+
+  runs/
+    300+ individual run directories, each named:
+    run_YYYYMMDD_HHMMSS_taskN_PIPELINE_MODEL_seedS
+    Each contains: query.txt, tests, solution.py, metrics.json, iterations/.
+
+
+================================================================================
+  RUNNING THE BENCHMARK
+================================================================================
+
+BEFORE YOU START
+  1. Make sure Ollama is running:
+       ollama serve
+
+  2. Pull the model you want to use (first time only):
+       ollama pull qwen2.5-coder:7b
+       ollama pull qwen2.5-coder:14b
+       ollama pull deepseek-coder-v2:16b
+
+  3. Check what models you have installed:
+       ollama list
+
+  4. Install Python dependencies (first time only):
+       pip install -r requirements.txt
+
+
+BASIC COMMANDS
+
+  Run a named preset:
+    python3 run_full_benchmark.py --preset <preset> --model <model>
+
+  List all available presets:
+    python3 run_full_benchmark.py --list
+
+  Show history of past runs:
+    python3 run_full_benchmark.py --history
+
+  Show detailed history from runs/ directory:
+    python3 show_all_runs.py              # summary by pipeline
+    python3 show_all_runs.py model        # grouped by model + pipeline
+    python3 show_all_runs.py all          # every individual run
+
+  Run only specific pipelines (skip one):
+    python3 run_full_benchmark.py --preset hard --model qwen2.5-coder:7b --pipelines iterative batch
+
+  Override any preset value on the fly:
+    python3 run_full_benchmark.py --preset hard --model qwen2.5-coder:7b --max_iterations 3
+    python3 run_full_benchmark.py --preset hard --model qwen2.5-coder:7b --no_mutation
+    python3 run_full_benchmark.py --preset hard --model qwen2.5-coder:7b --he_problems 20
+
+
+EXAMPLE RUNS
+
+  Quick smoke test to verify everything works (~5-10 min):
+    python3 run_full_benchmark.py --preset quick --model qwen2.5-coder:7b
+
+  Standard research run (known tasks):
+    python3 run_full_benchmark.py --preset hard --model qwen2.5-coder:7b
+
+  Novel task run (best for research — no memorization):
+    python3 run_full_benchmark.py --preset very_hard --model qwen2.5-coder:14b
+
+  Skip mutation testing to go faster:
+    python3 run_full_benchmark.py --preset hard --model qwen2.5-coder:7b --no_mutation
+
+
+================================================================================
+  MODELS — WHAT TO EXPECT FROM EACH
+================================================================================
+
+AVAILABLE MODELS (from ollama list)
+
+  qwen2.5-coder:3b  (1.9 GB)
+    - Fastest, lowest memory usage
+    - Often too weak for complex tasks — generates incorrect or incomplete code
+    - Use for: sanity checks only, not serious benchmarking
+    - Expect: low pass rates (20-40%) on medium+ tasks, frequent all-0% on hard tasks
+    - Risk: too many failures → no differentiation between pipelines
+
+  qwen2.5-coder:7b  (4.7 GB)  ← RECOMMENDED FOR MOST RUNS
+    - Good balance of speed and capability
+    - Strong enough to pass easy/medium tasks, struggles with hard/novel tasks
+    - Use for: easy, medium, hard presets with known tasks
+    - Expect: pass@1 ~50-80% on easy/medium, ~20-50% on hard
+    - HumanEval: ~80-85% pass@1
+    - Not recommended for: very_hard+ with novel tasks (usually gets 0%)
+
+  qwen2.5-coder:14b  (9.0 GB)  ← RECOMMENDED FOR NOVEL TASKS
+    - High quality, slower (roughly 2x slower than 7b)
+    - Can handle most known tasks with high pass rates
+    - Use for: very_hard, extremely_hard presets with novel tasks
+    - Expect: pass@1 ~40-70% on novel tasks, clear separation between pipelines
+    - HumanEval: ~85-90% pass@1
+    - Risk: may hit ceiling on easy/medium known tasks (all 100%)
+
+  deepseek-coder-v2:16b  (8.9 GB)
+    - Similar capability to qwen2.5-coder:14b
+    - Good alternative if qwen gives inconsistent results
+    - Use for: same as 14b — novel tasks and hard presets
+    - Expect: similar results to 14b, sometimes better on algorithmic problems
+
+  llama3.1:8b  (4.9 GB)
+    - General-purpose model, not specialized for coding
+    - Weaker than qwen2.5-coder:7b on Python tasks
+    - Use for: comparison baseline only
+    - Expect: lower pass rates than coder-specialized models at same size
+
+  deepseek-coder:6.7b  (3.8 GB)
+    - Older coder model, decent but outperformed by qwen2.5-coder:7b
+    - Use for: historical comparison if you have older runs with this model
+    - Expect: slightly lower pass rates than qwen2.5-coder:7b
+
+
+MODEL SELECTION RULE OF THUMB
+
+  Too weak (3b, bad 7b)  → all pipelines get 0%    → no differentiation
+  Sweet spot (7b–14b)    → some pass, some fail     → clear gaps between pipelines
+  Too strong (70b+)      → all pipelines get 100%   → no differentiation (ceiling)
+
+  The goal is to find a model where pass@1 is roughly 30–70%.
+  In that range, the feedback loop of iterative TDD makes a measurable difference.
+
+
+================================================================================
+  PRESET TO MODEL RECOMMENDATIONS
+================================================================================
+
+  PRESET           RECOMMENDED MODEL         REASON
+  -------          -----------------         ------
+  quick            qwen2.5-coder:7b          Fast smoke test, any model works
+  easy             qwen2.5-coder:7b          Known tasks, 7b passes most → good baseline
+  medium           qwen2.5-coder:7b          Known tasks, 7b shows variance
+  hard             qwen2.5-coder:7b          Known tasks, 7b struggles enough to differentiate
+  very_hard        qwen2.5-coder:14b         Novel tasks, needs 14b to get any passes
+  extremely_hard   qwen2.5-coder:14b         Novel tasks, needs 14b+
+                   deepseek-coder-v2:16b     Good alternative
+  legendary        deepseek-coder-v2:16b     Hardest novel tasks, use strongest available
+  impossible       deepseek-coder-v2:16b     Hardest novel tasks, use strongest available
+
+  MULTI-MODEL COMPARISON (to show results across models, run same preset twice):
+    python3 run_full_benchmark.py --preset hard --model qwen2.5-coder:7b
+    python3 run_full_benchmark.py --preset hard --model qwen2.5-coder:14b
+    python3 run_full_benchmark.py --history   ← compare side by side
+
+
+================================================================================
+  EXPECTED OUTPUT WALKTHROUGH
+================================================================================
+
+When you run a benchmark, output is divided into two parts:
+
+--- PART 1: MAIN EXPERIMENT ---
+
+  [Experiment] Seed 16 | source=unknown
+    → Starting a new task with seed 16. "unknown" = novel LLM-generated task.
+
+  [Experiment] Task: Molecular Formula Balance
+    → The task that was selected or generated for this seed.
+
+  [Pipeline] ITERATIVE | seed=16
+    Sample 1/5 (seed=16100)... FAIL (3/4 tests)
+    Sample 2/5 (seed=16200)... PASS
+    → Each sample is one independent run with a different seed offset.
+    → "FAIL (3/4 tests)" = code ran but only 3 out of 4 tests passed.
+    → "PASS" = all tests passed on this sample.
+
+  pass@1=0.200  pass@5=0.200  (1/5 samples passed)
+    → 1 out of 5 samples passed → pass@1 = 20%.
+
+  Done. pass@1=0.200 | mut=45.00% | LOC=18 | CC=4.2
+    → Summary for this pipeline on this task.
+
+  [Summary by Pipeline]
+  Pipeline    Runs  pass@1  pass@5  MutScore   CC   LOC  Attempts
+  iterative      3   45.0%   80.0%    62.0%   4.2    18      2.3
+  batch          3   30.0%   60.0%    55.0%   5.1    22      1.0
+  notdd          3   20.0%   40.0%     0.0%   6.8    31      1.0
+    → Averaged across all seeds. This is the key table for Part 1.
+    → iterative > batch > notdd = hypothesis confirmed.
+
+--- PART 2: HUMANEVAL ---
+
+  [iterative] HumanEval/0 ... PASS
+  [iterative] HumanEval/10 ... FAIL
+    → Each of 164 problems tested. PASS/FAIL based on check() function.
+
+  iterative: 137/164 passed  pass@1=0.835
+    → 83.5% of HumanEval problems solved. One number per pipeline.
+
+--- FINAL SUMMARY ---
+
+  Pipeline    pass@1  pass@5  MutScore  LOC   CC  Attempts  HumanEval
+  iterative   45.0%   80.0%    62.0%    18   4.2      2.3      83.5%
+  batch       30.0%   60.0%    55.0%    22   5.1      1.0      81.7%
+  notdd       20.0%   40.0%     0.0%    31   6.8      1.0      79.3%
+    → Combined view of Part 1 + Part 2.
+    → This is the table you use to compare models/presets across runs.
+
+  [Results] Saved to benchmark_results.jsonl
+    → Appended to the results file. View with --history.
+
+COMMON FAILURE MESSAGES
+
+  [FATAL] Ollama is not running.
+    → Run: ollama serve
+
+  404 / model not found
+    → Run: ollama pull <model-name>
+
+  [ERROR] Task generation failed: Expecting ',' delimiter
+    → LLM produced malformed JSON when generating a novel task.
+    → Normal occasional failure. The run continues with remaining seeds.
+
+  All 0% in Part 1
+    → Tasks too hard for this model. Switch to a stronger model or easier preset.
+
+  All 100% in Part 1
+    → Tasks too easy / memorized. Switch to novel task preset (very_hard+).
+
+
+================================================================================

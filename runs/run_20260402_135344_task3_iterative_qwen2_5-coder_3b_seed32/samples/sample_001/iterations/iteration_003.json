@@ -1,0 +1,8 @@
+{
+  "attempt": 3,
+  "code": "def is_valid(s: str) -> bool:\n    stack = []\n    matching_brackets = {') : '(', '}': '{', ']': '['}\n    \n    for char in s:\n        if char in matching_brackets.values():\n            stack.append(char)\n        elif char in matching_brackets.keys():\n            if not stack or stack.pop() != matching_brackets[char]:\n                return False\n        else:\n            raise ValueError(\"Input string contains invalid characters\")\n    \n    return len(stack) == 0",
+  "syntax_error": "closing parenthesis '}' does not match opening parenthesis '(' (solution.py, line 3)",
+  "tests_passed": 0,
+  "tests_total": 0,
+  "output": "SyntaxError in solution: closing parenthesis '}' does not match opening parenthesis '(' (solution.py, line 3)"
+}

@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "import re\n\ndef is_palindrome(s: str) -> bool:\n    # Normalize the string by removing non-alphanumeric characters and converting to lowercase\n    normalized = re.sub(r'[^a-zA-Z0-9]', '', s).lower()\n    \n    # Check if the normalized string reads the same forwards and backwards\n    return normalized == normalized[::-1]",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

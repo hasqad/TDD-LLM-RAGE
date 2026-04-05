@@ -1,0 +1,8 @@
+{
+  "attempt": 4,
+  "code": "def decode_hieroglyphic_sum(hieroglyphs: str) -> int:\n    values = {'I': 1, 'V': 5, 'X': 10}\n    total = 0\n    for i in range(len(hieroglyphs)):\n        if hieroglyphs[i] not in values:\n            raise ValueError(\"Invalid input\")\n        if i > 0 and values[hieroglyphs[i]] > values[hieroglyphs[i - 1]]:\n            total += values[hieroglyphs[i]] - 2 * values[hieroglyphs[i - 1]]\n        else:\n            total += values[hieroglyphs[i]]\n    return total",
+  "syntax_error": "",
+  "tests_passed": 5,
+  "tests_total": 6,
+  "output": "..F...                                                                   [100%]\n=================================== FAILURES ===================================\n______________________ test_decode_hieroglyphic_sum_LVIII ______________________\ntest_solution.py:10: in test_decode_hieroglyphic_sum_LVIII\n    assert decode_hieroglyphic_sum('LVIII') == 58\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsolution.py:6: in decode_hieroglyphic_sum\n    raise ValueError(\"Invalid input\")\nE   ValueError: Invalid input\n=========================== short test summary info ============================\nFAILED test_solution.py::test_decode_hieroglyphic_sum_LVIII - ValueError: Inv...\n1 failed, 5 passed in 0.02s\n"
+}

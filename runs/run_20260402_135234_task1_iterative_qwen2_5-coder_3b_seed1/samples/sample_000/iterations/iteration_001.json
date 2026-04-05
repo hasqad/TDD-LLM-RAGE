@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def is_palindrome(s: str) -> bool:\n    # Normalize the string by converting it to lowercase and removing non-alphanumeric characters\n    normalized_s = ''.join(char.lower() for char in s if char.isalnum())\n    \n    # Check if the normalized string reads the same forwards and backwards\n    return normalized_s == normalized_s[::-1]",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

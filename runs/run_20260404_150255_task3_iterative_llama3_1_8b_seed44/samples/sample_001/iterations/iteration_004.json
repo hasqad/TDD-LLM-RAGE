@@ -1,0 +1,8 @@
+{
+  "attempt": 4,
+  "code": "def decode_hieroglyphic_sum(hieroglyphs: str) -> int:\n    values = {'I': 1, 'V': 5, 'X': 10}\n    total = 0\n    for i in range(len(hieroglyphs)):\n        if hieroglyphs[i] == 'L' or hieroglyphs[i] == 'C':\n            continue\n        if i + 2 < len(hieroglyphs) and values[hieroglyphs[i]] < values[hieroglyphs[i+1]] and values[hieroglyphs[i]] < values[hieroglyphs[i+2]]:\n            total += values[hieroglyphs[i]]\n        elif i + 1 < len(hieroglyphs) and values[hieroglyphs[i]] < values[hieroglyphs[i + 1]]:\n            total -= values[hieroglyphs[i]]\n        else:\n            total += values[hieroglyphs[i]]\n    return total",
+  "syntax_error": "",
+  "tests_passed": 5,
+  "tests_total": 6,
+  "output": "..F...                                                                   [100%]\n=================================== FAILURES ===================================\n______________________ test_decode_hieroglyphic_sum_LVIII ______________________\ntest_solution.py:10: in test_decode_hieroglyphic_sum_LVIII\n    assert decode_hieroglyphic_sum('LVIII') == 58\nE   AssertionError: assert 8 == 58\nE    +  where 8 = decode_hieroglyphic_sum('LVIII')\n=========================== short test summary info ============================\nFAILED test_solution.py::test_decode_hieroglyphic_sum_LVIII - AssertionError:...\n1 failed, 5 passed in 0.02s\n"
+}

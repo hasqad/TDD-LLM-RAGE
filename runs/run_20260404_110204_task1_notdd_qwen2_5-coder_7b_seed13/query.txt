@@ -1,0 +1,16 @@
+Title: Decode Ways
+
+Description:
+A string of digits can be decoded where 'A'=1, 'B'=2, ..., 'Z'=26. Return the number of ways to decode the string. Digits with a leading zero (e.g. '06') are not valid two-digit encodings. A single '0' cannot be decoded.
+
+Function Signature:
+def num_decodings(s: str) -> int:
+
+Constraints:
+1 <= len(s) <= 100, s contains only digits
+
+Example Inputs:
+'226'
+
+Expected Outputs:
+3

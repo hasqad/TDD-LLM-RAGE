@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "from typing import List\n\ndef find_minimal_fold_sequence(seed: int, target_w: int, target_h: int) -> List[str]:\n    # Check for width\n    current_w = seed\n    k1 = 0\n    while current_w >= target_w:\n        if current_w == target_w:\n            break\n        current_w //= 2\n        k1 += 1\n    else:\n        return []\n    \n    # Check for height\n    current_h = seed\n    k2 = 0\n    while current_h >= target_h:\n        if current_h == target_h:\n            break\n        current_h //= 2\n        k2 += 1\n    else:\n        return []\n    \n    return ['W'] * k1 + ['H'] * k2",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

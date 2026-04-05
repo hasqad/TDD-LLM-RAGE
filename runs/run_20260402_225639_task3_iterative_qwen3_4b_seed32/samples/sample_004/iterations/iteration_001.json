@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def is_valid(s: str) -> bool:\n    stack = []\n    closing_map = {')': '(', '}': '{', ']': '['}\n    for char in s:\n        if char in ['(', '{', '[']:\n            stack.append(char)\n        else:\n            if not stack:\n                return False\n            top = stack.pop()\n            if top != closing_map[char]:\n                return False\n    return len(stack) == 0",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

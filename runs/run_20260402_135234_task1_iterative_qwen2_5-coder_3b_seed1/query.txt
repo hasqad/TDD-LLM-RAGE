@@ -1,0 +1,16 @@
+Title: Palindrome Check
+
+Description:
+Given a string, return True if it reads the same forwards and backwards (case-insensitive, ignoring non-alphanumeric characters).
+
+Function Signature:
+def is_palindrome(s: str) -> bool:
+
+Constraints:
+0 <= len(s) <= 2*10^5
+
+Example Inputs:
+'A man a plan a canal Panama'
+
+Expected Outputs:
+True

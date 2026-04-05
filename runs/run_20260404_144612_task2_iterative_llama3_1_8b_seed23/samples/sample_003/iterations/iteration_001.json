@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def spiral_order(matrix: list[list[int]]) -> list[int]:\n    result = []\n    while matrix and matrix[0]:\n        # Append first row to result\n        result += matrix.pop(0)\n        # Rotate the remaining matrix clockwise\n        matrix = (list(zip(*matrix)))[::-1]\n    return result",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

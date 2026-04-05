@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def spiral_order(matrix: list[list[int]]) -> list[int]:\n    result = []\n    while matrix:\n        result += matrix.pop(0)\n        if matrix and matrix[0]:\n            for row in matrix:\n                result.append(row.pop())\n        if matrix:\n            result += matrix.pop()[::-1]\n        if matrix and matrix[0]:\n            for row in matrix[::-1]:\n                result.append(row.pop(0))\n    return result",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

@@ -1,0 +1,8 @@
+{
+  "attempt": 5,
+  "code": "def decode_hieroglyphic_sum(hieroglyphs: str) -> int:\n    values = {'I': 1, 'V': 5, 'X': 10}\n    total = 0\n    for i in range(len(hieroglyphs)):\n        if i > 0 and values[hieroglyphs[i]] < values[hieroglyphs[i - 1]]:\n            total -= values[hieroglyphs[i]]\n        else:\n            total += values.get(hieroglyphs[i], 0)\n    return total",
+  "syntax_error": "",
+  "tests_passed": 4,
+  "tests_total": 6,
+  "output": ".FF...                                                                   [100%]\n=================================== FAILURES ===================================\n_______________________ test_decode_hieroglyphic_sum_IX ________________________\ntest_solution.py:7: in test_decode_hieroglyphic_sum_IX\n    assert decode_hieroglyphic_sum('IX') == 9\nE   AssertionError: assert 11 == 9\nE    +  where 11 = decode_hieroglyphic_sum('IX')\n______________________ test_decode_hieroglyphic_sum_LVIII ______________________\ntest_solution.py:10: in test_decode_hieroglyphic_sum_LVIII\n    assert decode_hieroglyphic_sum('LVIII') == 58\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsolution.py:5: in decode_hieroglyphic_sum\n    if i > 0 and values[hieroglyphs[i]] < values[hieroglyphs[i - 1]]:\n                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   KeyError: 'L'\n=========================== short test summary info ============================\nFAILED test_solution.py::test_decode_hieroglyphic_sum_IX - AssertionError: as...\nFAILED test_solution.py::test_decode_hieroglyphic_sum_LVIII - KeyError: 'L'\n2 failed, 4 passed in 0.02s\n"
+}
