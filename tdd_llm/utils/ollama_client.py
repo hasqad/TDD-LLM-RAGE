@@ -53,7 +53,7 @@ class OllamaClient:
             data=data,
             headers=self._headers(),
         )
-        timeout = 600 if "deepseek-r1" in self.model.lower() else 300
+        timeout = 1200 if "deepseek-r1" in self.model.lower() else 600
         try:
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 body = json.loads(resp.read().decode("utf-8"))
