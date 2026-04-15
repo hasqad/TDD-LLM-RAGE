@@ -1,0 +1,20 @@
+Title: Ancient Roman Numeral Cipher
+
+Description:
+Decipher an ancient Roman numeral and return its decimal equivalent. The function should handle both simple and complex Roman numerals, including those with subtractive notation (e.g., IV for 4).
+
+Function Signature:
+def decipher_roman_numeral(roman: str) -> int:
+
+Constraints:
+The input string will only contain valid Roman numeral characters ('I', 'V', 'X', 'L', 'C', 'D', 'M') in uppercase. The length of the input string will be between 1 and 15 characters.
+
+Example Inputs:
+'XXIII'
+'IV'
+'MCMXCIV'
+
+Expected Outputs:
+23
+4
+1994

@@ -1,0 +1,16 @@
+Title: Recipe Chain Optimization
+
+Description:
+Given a list of recipes with nutritional values and costs, and a dependency graph, find the minimum total cost to achieve at least the minimum calories and protein by selecting recipes while respecting the dependency graph (each recipe depends on its parents, which must be selected first).
+
+Function Signature:
+def recipe_chain_optimization(n: int, recipes: List[Tuple[str, int, Tuple[int, int]]], graph: List[List[int]], min_cal: int, min_protein: int) -> int:
+
+Constraints:
+n: 1 <= n <= 20; recipes: each recipe has a name (string), cost (int), and nutritional values (Tuple[int, int] for (calories, protein)); graph: a list of parent recipe indices for each recipe; min_cal and min_protein: integers between 0 and 200; each recipe's cost is between 1 and 100, and nutritional values between 1 and 100.
+
+Example Inputs:
+[("Recipe1", 10, (5, 5)), ("Recipe2", 20, (10, 10)), ("Recipe3", 30, (15, 15))], [[], [0], [0]], 20, 10
+
+Expected Outputs:
+40
