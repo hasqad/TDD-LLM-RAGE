@@ -1,0 +1,16 @@
+Title: Origami Fold Sequence Finder
+
+Description:
+Given a seed defining the initial dimensions of the origami paper as (seed, seed), and target dimensions (target_w, target_h), find the shortest sequence of folds to reduce the dimensions to the target. Each fold is either 'W' (fold width, halving width) or 'H' (fold height, halving height), but only if the dimension is greater than 1. The sequence is returned as a list of strings, each being 'W' or 'H'. If the target is unreachable, return an empty list.
+
+Function Signature:
+def find_minimal_fold_sequence(seed: int, target_w: int, target_h: int) -> List[str]:
+
+Constraints:
+seed, target_w, target_h are positive integers. The target dimensions must be less than or equal to the initial dimensions in both axes. Fold operations are only allowed if the dimension is greater than 1. Edge cases include when target dimensions are unreachable or when dimensions are 1.
+
+Example Inputs:
+8, 4, 4
+
+Expected Outputs:
+["W", "H"]
