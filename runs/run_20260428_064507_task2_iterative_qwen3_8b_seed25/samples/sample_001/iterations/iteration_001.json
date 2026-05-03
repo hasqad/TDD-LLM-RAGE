@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def decipher_roman_numeral(roman: str) -> int:\n    roman_values = {'I':1, 'V':5, 'X':10, 'L':50, 'C':100, 'D':500, 'M':1000}\n    total = 0\n    for i in range(len(roman)):\n        current_value = roman_values[roman[i]]\n        if i < len(roman)-1 and current_value < roman_values[roman[i+1]]:\n            total -= current_value\n        else:\n            total += current_value\n    return total",
+  "syntax_error": "",
+  "tests_passed": 1,
+  "tests_total": 1,
+  "output": ".                                                                        [100%]\n1 passed in 0.01s\n"
+}

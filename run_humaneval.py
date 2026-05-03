@@ -10,8 +10,10 @@ Usage:
 """
 
 import argparse
+import json
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -110,6 +112,22 @@ def main() -> None:
             f"{r.problems_passed:>8} {r.problems_total:>8}"
         )
     print()
+
+    # Save per-problem results
+    out_path = Path("data/humaneval_per_problem.jsonl")
+    out_path.parent.mkdir(exist_ok=True)
+    ts = datetime.now().isoformat()
+    with open(out_path, "a") as f:
+        for r in results:
+            for p in r.per_problem:
+                f.write(json.dumps({
+                    "timestamp": ts,
+                    "model": args.model,
+                    "pipeline": r.pipeline,
+                    "task_id": p["task_id"],
+                    "passed": p["passed"],
+                }) + "\n")
+    print(f"[HumanEval] Per-problem results saved to {out_path}")
 
 
 if __name__ == "__main__":

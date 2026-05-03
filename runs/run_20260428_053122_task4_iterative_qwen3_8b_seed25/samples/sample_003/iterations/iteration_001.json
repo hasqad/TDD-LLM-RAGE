@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def min_distance(word1: str, word2: str) -> int:\n    m = len(word1)\n    n = len(word2)\n    dp = [[0]*(n+1) for _ in range(m+1)]\n    \n    for i in range(m+1):\n        dp[i][0] = i\n    for j in range(n+1):\n        dp[0][j] = j\n    \n    for i in range(1, m+1):\n        for j in range(1, n+1):\n            if word1[i-1] == word2[j-1]:\n                dp[i][j] = dp[i-1][j-1]\n            else:\n                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])\n    \n    return dp[m][n]",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

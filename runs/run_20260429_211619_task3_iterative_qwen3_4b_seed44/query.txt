@@ -1,0 +1,18 @@
+Title: Decode Egyptian Hieroglyphic Sum
+
+Description:
+Given a string of Egyptian hieroglyphic symbols representing numbers, return their sum as an integer. Each symbol corresponds to a value (I=1, V=5, X=10), and consecutive symbols are added.
+
+Function Signature:
+def decode_hieroglyphic_sum(hieroglyphs: str) -> int:
+
+Constraints:
+Input is a string of uppercase letters 'I', 'V', and 'X'. Length is between 1 and 100 characters.
+
+Example Inputs:
+'III' -> 3
+'IX' -> 9
+'LVIII' -> 58
+
+Expected Outputs:
+[3, 9, 58]

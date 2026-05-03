@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "from typing import List\nfrom collections import deque\n\ndef find_minimal_fold_sequence(seed: int, target_w: int, target_h: int) -> List[str]:\n    if target_w > seed or target_h > seed:\n        return []\n    \n    def is_achievable(dim, seed_dim):\n        if dim == 0:\n            return False\n        if seed_dim % dim != 0:\n            return False\n        ratio = seed_dim // dim\n        return (ratio & (ratio - 1)) == 0\n    \n    if not (is_achievable(target_w, seed) and is_achievable(target_h, seed)):\n        return []\n    \n    visited = set()\n    queue = deque()\n    queue.append((seed, seed, []))\n    visited.add((seed, seed))\n    \n    while queue:\n        current_w, current_h, path = queue.popleft()\n        if current_w == target_w and current_h == target_h:\n            return path\n        # Try fold W\n        if current_w > 1:\n            new_w = current_w // 2\n            new_h = current_h\n            state = (new_w, new_h)\n            if state not in visited:\n                visited.add(state)\n                queue.append((new_w, new_h, path + ['W']))\n        # Try fold H\n        if current_h > 1:\n            new_h = current_h // 2\n            new_w = current_w\n            state = (new_w, new_h)\n            if state not in visited:\n                visited.add(state)\n                queue.append((new_w, new_h, path + ['H']))\n    \n    return []",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}

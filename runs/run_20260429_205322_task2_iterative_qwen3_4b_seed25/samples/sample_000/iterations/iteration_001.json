@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def decipher_roman_numeral(roman: str) -> int:\n    mapping = {\n        'I': 1,\n        'V': 5,\n        'X': 10,\n        'L': 50,\n        'C': 100,\n        'D': 500,\n        'M': 1000\n    }\n    total = 0\n    i = 0\n    n = len(roman)\n    while i < n:\n        if i == n - 1:\n            total += mapping[roman[i]]\n            i += 1\n        else:\n            if mapping[roman[i]] < mapping[roman[i+1]]:\n                total += mapping[roman[i+1]] - mapping[roman[i]]\n                i += 2\n            else:\n                total += mapping[roman[i]]\n                i += 1\n    return total",
+  "syntax_error": "",
+  "tests_passed": 1,
+  "tests_total": 1,
+  "output": ".                                                                        [100%]\n1 passed in 0.01s\n"
+}

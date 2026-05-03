@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def spiral_order(matrix: list[list[int]]) -> list[int]:\n    if not matrix or not matrix[0]:\n        return []\n    rows = len(matrix)\n    cols = len(matrix[0])\n    top = 0\n    bottom = rows - 1\n    left = 0\n    right = cols - 1\n    result = []\n\n    while left <= right and top <= bottom:\n        for j in range(left, right + 1):\n            result.append(matrix[top][j])\n        top += 1\n        \n        for i in range(top, bottom + 1):\n            result.append(matrix[i][right])\n        right -= 1\n        \n        if top <= bottom:\n            for j in range(right, left - 1, -1):\n                result.append(matrix[bottom][j])\n            bottom -= 1\n        \n        if left <= right and top <= bottom:\n            for i in range(bottom, top - 1, -1):\n                result.append(matrix[i][left])\n            left += 1\n    \n    return result",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.02s\n"
+}

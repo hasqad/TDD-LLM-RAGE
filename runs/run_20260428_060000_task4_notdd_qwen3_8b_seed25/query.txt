@@ -1,0 +1,16 @@
+Title: Edit Distance
+
+Description:
+Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2. You have three operations: insert a character, delete a character, replace a character.
+
+Function Signature:
+def min_distance(word1: str, word2: str) -> int:
+
+Constraints:
+0 <= len(word1), len(word2) <= 500
+
+Example Inputs:
+'horse', 'ros'
+
+Expected Outputs:
+3

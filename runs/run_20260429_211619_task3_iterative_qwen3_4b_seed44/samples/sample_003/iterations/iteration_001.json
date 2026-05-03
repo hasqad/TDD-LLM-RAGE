@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "def decode_hieroglyphic_sum(hieroglyphs: str) -> int:\n    value_map = {'I': 1, 'V': 5, 'X': 10, 'L': 50}\n    total = 0\n    i = 0\n    n = len(hieroglyphs)\n    while i < n:\n        if i + 1 < n:\n            if hieroglyphs[i] == 'I' and hieroglyphs[i+1] == 'V':\n                total += 4\n                i += 2\n            elif hieroglyphs[i] == 'I' and hieroglyphs[i+1] == 'X':\n                total += 9\n                i += 2\n            elif hieroglyphs[i] == 'X' and hieroglyphs[i+1] == 'L':\n                total += 40\n                i += 2\n            else:\n                total += value_map[hieroglyphs[i]]\n                i += 1\n        else:\n            total += value_map[hieroglyphs[i]]\n            i += 1\n    return total",
+  "syntax_error": "",
+  "tests_passed": 4,
+  "tests_total": 4,
+  "output": "....                                                                     [100%]\n4 passed in 0.01s\n"
+}

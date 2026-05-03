@@ -1,0 +1,8 @@
+{
+  "attempt": 1,
+  "code": "from typing import List\nfrom collections import deque\n\ndef find_minimal_fold_sequence(seed: int, target_w: int, target_h: int) -> List[str]:\n    def is_power_of_two(n):\n        return n > 0 and (n & (n - 1)) == 0\n    \n    if seed % target_w != 0 or not is_power_of_two(seed // target_w):\n        return []\n    if seed % target_h != 0 or not is_power_of_two(seed // target_h):\n        return []\n    \n    queue = deque()\n    queue.append((seed, seed, []))\n    visited = set()\n    visited.add((seed, seed))\n    \n    while queue:\n        current_w, current_h, path = queue.popleft()\n        if current_w == target_w and current_h == target_h:\n            return path\n        if current_w > 1:\n            new_w = current_w // 2\n            new_h = current_h\n            new_path = path + ['W']\n            if (new_w, new_h) not in visited:\n                visited.add((new_w, new_h))\n                queue.append((new_w, new_h, new_path))\n        if current_h > 1:\n            new_h = current_h // 2\n            new_w = current_w\n            new_path = path + ['H']\n            if (new_w, new_h) not in visited:\n                visited.add((new_w, new_h))\n                queue.append((new_w, new_h, new_path))\n    return []",
+  "syntax_error": "",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "output": "......                                                                   [100%]\n6 passed in 0.01s\n"
+}
